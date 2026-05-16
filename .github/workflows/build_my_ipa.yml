@@ -20,7 +20,9 @@ jobs:
 
       - name: Configure Local Compilation Profile
         run: |
-          git clone --recursive "https://github.com" "$HOME/theos"
+          curl -L "https://github.com" -o theos.tar.gz
+          mkdir -p "$HOME/theos"
+          tar -xzf theos.tar.gz -C "$HOME/theos" --strip-components=1
           export THEOS="$HOME/theos"
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
           make spm
@@ -39,9 +41,11 @@ jobs:
 
       - name: Inject Custom Code Into IPA Bundle
         run: |
-          git clone "https://github.com"
-          cd ivinject && gcc ivinject.c -o ivinject && cd ..
-          ./ivinject/ivinject -o spotify_app/Payload/Spotify.app/Spotify -t layout/Library/MobileSubstrate/DynamicLibraries/EeveeSpotify.dylib
+          curl -L "https://github.com" -o ivinject.tar.gz
+          mkdir -p ivinject_src
+          tar -xzf ivinject.tar.gz -C ivinject_src --strip-components=1
+          cd ivinject_src && gcc ivinject.c -o ivinject && cd ..
+          ./ivinject_src/ivinject -o spotify_app/Payload/Spotify.app/Spotify -t layout/Library/MobileSubstrate/DynamicLibraries/EeveeSpotify.dylib
 
       - name: Package Your Final Custom IPA
         run: |
