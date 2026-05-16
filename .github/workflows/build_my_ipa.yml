@@ -18,9 +18,9 @@ jobs:
         with:
           swift-version: '5.9'
 
-      - name: Install and Configure Theos Framework
+      - name: Clone Theos Framework Natively
         run: |
-          bash -c "$(curl -fsSL https://githubusercontent.com)"
+          git clone --recursive https://github.com ~/theos
           echo "THEOS=~/theos" >> $GITHUB_ENV
           export THEOS=~/theos
           make spm
@@ -41,7 +41,7 @@ jobs:
         run: |
           git clone https://github.com
           cd ivinject && gcc ivinject.c -o ivinject && cd ..
-          ./ivinject/ivinject -o spotify_app/Payload/Spotify.app/Spotify -t layout/Library/MobileSubstrate/DynamicLibraries/EeveeSpotify.dylib
+          ./ivinject/ivinject -o spotify_app/Payload/Spotify.app/Spotify -t layout/Library/MicroSubstrate/DynamicLibraries/EeveeSpotify.dylib || ./ivinject/ivinject -o spotify_app/Payload/Spotify.app/Spotify -t layout/Library/MobileSubstrate/DynamicLibraries/EeveeSpotify.dylib
 
       - name: Package Your Final Custom IPA
         run: |
