@@ -8,15 +8,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     steps:
       - name: Checkout Your Custom Code
         uses: actions/checkout@v4
 
-      - name: Set up Xcode and Swift Environment
-        uses: maxim-lobanov/setup-xcode@v1
+      - name: Set up Swift Environment
+        uses: swift-actions/setup-swift@v2
         with:
-          xcode-version: '15.0'
+          swift-version: '5.9'
 
       - name: Build Tweak Binary Natively
         run: |
@@ -26,8 +26,8 @@ jobs:
 
       - name: Download and Unpack Vanilla Spotify
         run: |
-          curl -LO "${{ github.event.inputs.decrypted_ipa_url }}"
-          unzip *.ipa -d spotify_app
+          curl -L "${{ github.event.inputs.decrypted_ipa_url }}" -o incoming_app.ipa
+          unzip incoming_app.ipa -d spotify_app
 
       - name: Inject Custom Code Into IPA Bundle
         run: |
@@ -38,13 +38,13 @@ jobs:
       - name: Package Your Final Custom IPA
         run: |
           cd spotify_app
-          zip -r ../MyCustomSpotify.ipa Payload
+          zip -r ../NexusSpotify.ipa Payload
           cd ..
 
       - name: Upload Finished Custom IPA to Github Releases
         uses: softprops/action-gh-release@v1
         with:
-          files: MyCustomSpotify.ipa
-          tag_name: "custom-v${{ github.run_number }}"
+          files: NexusSpotify.ipa
+          tag_name: "nexus-v${{ github.run_number }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
