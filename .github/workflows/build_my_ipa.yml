@@ -18,8 +18,16 @@ jobs:
         with:
           swift-version: '5.9'
 
+      - name: Install and Configure Theos Framework
+        run: |
+          bash -c "$(curl -fsSL https://githubusercontent.com)"
+          echo "THEOS=~/theos" >> $GITHUB_ENV
+          export THEOS=~/theos
+          make spm
+
       - name: Build Tweak Binary Natively
         run: |
+          export THEOS=~/theos
           swift build -c release --triple arm64-apple-ios
           mkdir -p layout/Library/MobileSubstrate/DynamicLibraries
           cp .build/release/EeveeSpotify.dylib layout/Library/MobileSubstrate/DynamicLibraries/
