@@ -20,15 +20,14 @@ jobs:
 
       - name: Configure Local Compilation Profile
         run: |
-          git clone --recursive https://github.com
-          mv theos ~/theos
-          export THEOS=~/theos
-          echo "THEOS=~/theos" >> $GITHUB_ENV
+          git clone --recursive "https://github.com" "$HOME/theos"
+          export THEOS="$HOME/theos"
+          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
           make spm
 
       - name: Build Tweak Binary Natively
         run: |
-          export THEOS=~/theos
+          export THEOS="$HOME/theos"
           swift build -c release --triple arm64-apple-ios
           mkdir -p layout/Library/MobileSubstrate/DynamicLibraries
           cp .build/release/EeveeSpotify.dylib layout/Library/MobileSubstrate/DynamicLibraries/
@@ -40,7 +39,7 @@ jobs:
 
       - name: Inject Custom Code Into IPA Bundle
         run: |
-          git clone https://github.com
+          git clone "https://github.com"
           cd ivinject && gcc ivinject.c -o ivinject && cd ..
           ./ivinject/ivinject -o spotify_app/Payload/Spotify.app/Spotify -t layout/Library/MobileSubstrate/DynamicLibraries/EeveeSpotify.dylib
 
